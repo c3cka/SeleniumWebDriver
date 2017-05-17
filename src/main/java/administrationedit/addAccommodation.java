@@ -14,21 +14,24 @@ import functions.adminLogin;
 import functions.autoCompleteSelect;
 import functions.imageUpload;
 import java.awt.AWTException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class addAccommodation {
 	
 	static WebDriver driver;
 	//static String title;
 	
-    public static void main(String[] args) throws AWTException{
+    public static void main(String[] args) throws AWTException, InterruptedException{
 		
         System.setProperty("webdriver.chrome.driver", "C:\\chromedriver.exe");
         driver = new ChromeDriver();
 		WebDriverWait wait = new WebDriverWait(driver, 3);
 		driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+//        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 		
 		String[] city = {"Rijeka", "Pula", "Poreč", "Rovinj", "Umag", "Novigrad", "Vrsar", "Pazin", "Motovun", "Medulin", "Fažana", "Vodnjan", "Opatija", "Krk", "Punat", "Baška", "Njivice", "Labin", "Rabac", "Plomin", 
 			"Ičići", "Ika", "Malinska", "Njivice", "Omišalj", "Dramalj", "Crikvenica", "Selce", "Cres", "Rab", "Novi Vinodolski", "Povile", "Čižići", "Vodice", "Pinezići", "Lovran", "Medveja", "shanghai","sao paulo",
@@ -58,20 +61,20 @@ public class addAccommodation {
         //Input data in all required fields	
         //Enter titles and descriptions in different languages
 		int titleInt = r.nextInt(1000000);
-		//title = driver.findElement(By.xpath("//*[@id='title__en']")).sendKeys("TitleEN(" + titleInt + ")");
-        driver.findElement(By.xpath("//*[@id='title__en']")).sendKeys("TitleEN(" + titleInt + ")");
+		//title = driver.findElement(By.xpath("//*[@id='title__en']")).sendKeys("AccommodationEN(" + titleInt + ")");
+        driver.findElement(By.xpath("//*[@id='title__en']")).sendKeys("AccommodationEN(" + titleInt + ")");
         driver.findElement(By.xpath("//*[@id='redactor-uuid-0']")).sendKeys("Description EN [" + titleInt + "]");
 		//Switch to HR
         driver.findElement(By.linkText("Hrvatski")).click();
-        driver.findElement(By.xpath("//*[@id='title__hr']")).sendKeys("TitleHR(" + titleInt + ")");
+        driver.findElement(By.xpath("//*[@id='title__hr']")).sendKeys("AccommodationHR(" + titleInt + ")");
         driver.findElement(By.xpath("//*[@id='redactor-uuid-1']")).sendKeys("Description HR [" + titleInt + "]");
 		//Switch to DE
         driver.findElement(By.linkText("Deutsch")).click();
-        driver.findElement(By.xpath("//*[@id='title__de']")).sendKeys("TitleDE(" + titleInt + ")");
+        driver.findElement(By.xpath("//*[@id='title__de']")).sendKeys("AccommodationDE(" + titleInt + ")");
         driver.findElement(By.xpath("//*[@id='redactor-uuid-2']")).sendKeys("Description DE [" + titleInt + "]");
 		//Switch to IT
         driver.findElement(By.linkText("Italiano")).click();
-        driver.findElement(By.xpath("//*[@id='title__it']")).sendKeys("TitleIT(" + titleInt + ")");
+        driver.findElement(By.xpath("//*[@id='title__it']")).sendKeys("AccommodationIT(" + titleInt + ")");
         driver.findElement(By.xpath("//*[@id='redactor-uuid-3']")).sendKeys("Description IT [" + titleInt + "]");
 
         //driver.findElement(By.xpath("//*[@id='tab-basic']/div[9]/div[1]/div/ins")).click();
@@ -120,43 +123,41 @@ public class addAccommodation {
 		// TAG
 		int tag1 = r.nextInt(tags.length);	
 		int tag2 = r.nextInt(tags.length);
-		driver.findElement(By.xpath("//*[@id='tab-basic']/div[22]/div[1]/ul/li/input")).sendKeys(tags[tag1], Keys.TAB, tags[tag2], Keys.TAB);
+		driver.findElement(By.xpath("//*[@id='tab-basic']/div[22]/div[1]/ul/li/input")).sendKeys(tags[tag1], Keys.TAB);
+		driver.findElement(By.xpath("//*[@id='tab-basic']/div[22]/div[1]/ul/li/input")).sendKeys(tags[tag2], Keys.TAB);
 
 		//Switch to Propeties tab
 		driver.findElement(By.linkText("Properties")).click();
 				
 		//Enter distances for object(radnom from 0-1000 m/km)
-		int distanceInt = r.nextInt(1000);
-		String distanceStr = Integer.toString(distanceInt);
-		//First distance
-		driver.findElement(By.id("BTq0OoDrIiYjJmlyf5ibKwzT")).sendKeys(distanceStr);
-		Select distance1 = new Select(driver.findElement(By.id("BTq0OoDrIiYjJmlyf5ibKwzT_measure")));
-		int distanse1m = r.nextInt(distance1.getOptions().size());
-		distance1.selectByIndex(distanse1m);
-		//Second distance
-		int distanceInt2 = r.nextInt(1000);
-		String distanceStr2 = Integer.toString(distanceInt2);
-		driver.findElement(By.id("0HiQbqa56TEWP6XeZT76fu6w")).sendKeys(distanceStr2);
-		Select distance2 = new Select(driver.findElement(By.id("0HiQbqa56TEWP6XeZT76fu6w_measure")));
-		int distanse2m = r.nextInt(distance2.getOptions().size());
-		distance2.selectByIndex(distanse2m);
-		//Third distance
-		int distanceInt3 = r.nextInt(1000);
-		String distanceStr3 = Integer.toString(distanceInt3);
-		driver.findElement(By.id("tVzcnXrQF7ALeXEUMsMpERhi")).sendKeys(distanceStr3);
-		Select distance3 = new Select(driver.findElement(By.id("tVzcnXrQF7ALeXEUMsMpERhi_measure")));
-		int distanse3m = r.nextInt(distance3.getOptions().size());
-		distance3.selectByIndex(distanse3m);
 
+		//First distance
+		
+		List<WebElement> id = driver.findElements(By.xpath("//*[@class='tbl_cell'] //input"));
+		for(WebElement e : id){
+			String elID = e.getAttribute("id");
+			int distanceInt = r.nextInt(1000);
+			String distanceStr = Integer.toString(distanceInt);
+			driver.findElement(By.id(elID)).sendKeys(distanceStr);
+			Select distance1 = new Select(driver.findElement(By.id(elID+"_measure")));
+			int distanse1m = r.nextInt(distance1.getOptions().size());
+			distance1.selectByIndex(distanse1m);
+		}
+		
 		//Select season
 		driver.findElement(By.linkText("Seasons")).click();
-		driver.findElement(By.xpath("//*[@id='tab-seasons']/div[1]/div[1]/div/div[2]/a[3]")).click();
-				
+		
+		String year = driver.findElement(By.xpath("//*[@id='tab-seasons']/ul/li[1]/a")).getText();
+		driver.findElement(By.linkText("Season-"+year)).click();
+		driver.findElement(By.xpath("//*[@id='tab-seasons']/ul/li[2]/a")).click();
+		String year1 = driver.findElement(By.xpath("//*[@id='tab-seasons']/ul/li[2]/a")).getText();
+		driver.findElement(By.linkText("Season-"+year1)).click();
+
 		//Save
         //driver.findElement(By.xpath("//*[@id='accForm']/div[2]/div/div/div/div[3]/div/button[1]")).click();
         if (driver.findElement(By.xpath("//*[@id='page-wrapper']/div[2]/div[1]")).getText().contains("created")) {
             System.out.println("Accommodation created!!");
-			//driver.close();
+			driver.close();
 		}
         //driver.close();
     }
